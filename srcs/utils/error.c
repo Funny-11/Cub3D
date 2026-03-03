@@ -3,14 +3,14 @@
 /*                                                        :::      ::::::::   */
 /*   error.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: gifanell <giuliafanelli111@gmail.com>      +#+  +:+       +#+        */
+/*   By: gifanell <gifanell@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/23 18:32:57 by gifanell          #+#    #+#             */
-/*   Updated: 2026/02/23 22:13:07 by gifanell         ###   ########.fr       */
+/*   Updated: 2026/03/03 16:47:01 by gifanell         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "cub3D.h"
+#include "../../includes/cub3d.h"
 
 int     error_msg(char *msg)
 {

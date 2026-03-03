@@ -3,58 +3,58 @@
 /*                                                        :::      ::::::::   */
 /*   validate_map.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: gifanell <giuliafanelli111@gmail.com>      +#+  +:+       +#+        */
+/*   By: gifanell <gifanell@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/23 18:32:18 by gifanell          #+#    #+#             */
-/*   Updated: 2026/02/24 01:11:35 by gifanell         ###   ########.fr       */
+/*   Updated: 2026/03/03 16:21:55 by gifanell         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../includes/cub3D.h"
 
-static void free_grid_copy(char **grid, int rows)
+static void	free_grid_copy(char **grid, int rows)
 {
-    int i;
+	int i;
 
-    i = 0;
-    while (i < rows)
-    {
-        free(grid[i]);
-        i++;
-    }
-    free(grid);
+	i = 0;
+	while (i < rows)
+	{
+		free(grid[i]);
+		i++;
+	}
+	free(grid);
 }
 
 static char **copy_grid(t_map *map)
 {
-    char    **copy;
-    int     i;
+	char	**copy;
+	int		i;
 
-    copy = malloc(sizeof(char *) * (map->rows + 1));
-    if (!copy)
-        return (NULL);
-    i = 0;
-    while (i < map->rows)
-    {
-        copy[i] = ft_strdup(map->grid[i]);
-        if (!copy[i])
-        {
-            free_grid_copy(copy, i);
-            return (NULL);
-        }
-        i++;
-    }
-    copy[map->rows] = NULL;
-    return (copy);
+	copy = malloc(sizeof(char *) * (map->rows + 1));
+	if (!copy)
+		return (NULL);
+	i = 0;
+	while (i < map->rows)
+	{
+		copy[i] = ft_strdup(map->grid[i]);
+		if (!copy[i])
+		{
+			free_grid_copy(copy, i);
+			return (NULL);
+		}
+		i++;
+	}
+	copy[map->rows] = NULL;
+	return (copy);
 }
 
-static int  flood_fill(char **grid, int x, int y, t_map *map)
+static int	flood_fill(char **grid, int x, int y, t_map *map)
 {
-    if (y < 0 || y >= map->rows || x < 0 || x >= map->cols)
-        return (1);
-    if (grid[y][x] == '1' || grid[y][x] == 'F')
-        return (0);
-    if (grid[y][x] == ' ' || grid[y][x] == '\0')
+	if (y < 0 || y >= map->rows || x < 0 || x >= map->cols)
+		return (1);
+	if (grid[y][x] == '1' || grid[y][x] == 'F')
+		return (0);
+	if (grid[y][x] == ' ' || grid[y][x] == '\0')
 		return (1);
 	grid[y][x] = 'F';
 	if (flood_fill(grid, x + 1, y, map))
@@ -68,9 +68,9 @@ static int  flood_fill(char **grid, int x, int y, t_map *map)
 	return (0);
 }
 
-int validate_map(t_map *map, t_player *player)
+int	validate_map(t_map *map, t_player *player)
 {
-    char    **copy;
+	char	**copy;
 	int		start_x;
 	int		start_y;
 	int		result;

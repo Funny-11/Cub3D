@@ -6,7 +6,7 @@
 #    By: gifanell <gifanell@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2026/01/27 19:28:06 by gifanell          #+#    #+#              #
-#    Updated: 2026/02/24 17:11:12 by gifanell         ###   ########.fr        #
+#    Updated: 2026/03/03 16:46:04 by gifanell         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -16,9 +16,26 @@ NAME_BONUS = cub3d_bonus
 CC = cc
 CFLAGS = -Wall -Wextra -Werror -g
 
-SRCS =		./main.c \
-			./utils.c \
-			./errors.c \
+SRCS =		./srcs/main.c \
+			./srcs/utils/error.c \
+			./srcs/utils/cleanup.c \
+			./srcs/utils/init.c \
+			./srcs/engine/dda.c \
+			./srcs/engine/raycaster.c \
+			./srcs/engine/render.c \
+			./srcs/engine/textures.c \
+			./srcs/parsing/parse_elements.c \
+			./srcs/parsing/parse_file.c \
+			./srcs/parsing/parse_map.c \
+			./srcs/parsing/parse_textures.c \
+			./srcs/parsing/parse_utils.c \
+			./parsing/validate_map.c \
+			./player/movement.c \
+			./player/rotation.c \
+			./texture/east.xpm \
+			./texture/north.xpm \
+			./texture/south.xpm \
+			./texture/west.xpm \
 
 SRCS_BONUS =		./parse_bonus.c \
 					./utils_bonus.c \
