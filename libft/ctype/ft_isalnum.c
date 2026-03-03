@@ -20,6 +20,7 @@ int	ft_isalnum(int c)
 	else
 		return (0);
 }
+
 /* DESCRIPTION
 	/ENG/
 	DESCRIZIONE/SPIEGAZIONE FUNZIONE

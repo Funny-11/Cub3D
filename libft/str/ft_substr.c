@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ft_substr.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: gifanell <marvin@42.fr>                    +#+  +:+       +#+        */
+/*   By: gifanell <gifanell@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/30 17:49:27 by gifanell          #+#    #+#             */
-/*   Updated: 2024/11/30 17:49:29 by gifanell         ###   ########.fr       */
+/*   Updated: 2025/07/09 17:29:16 by gifanell         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,6 +18,8 @@ char	*ft_substr(char const *s, unsigned int start, size_t len)
 	size_t			i;
 
 	i = 0;
+	if (!s)
+		return (NULL);
 	if (start > ft_strlen(s))
 		return (ft_strdup(""));
 	if (start + len >= ft_strlen(s))
@@ -33,6 +35,7 @@ char	*ft_substr(char const *s, unsigned int start, size_t len)
 	}
 	return ((char *)dst);
 }
+
 /* DESCRIPTION
 	/ENG/
 	DESCRIZIONE/SPIEGAZIONE FUNZIONE
@@ -44,7 +47,7 @@ char	*ft_substr(char const *s, unsigned int start, size_t len)
 	=> "ur comme"
    CHANGE_LOG
    	CAMBIAMENTO APPORTATO E PERCHE'
-   	
+
    RETURN VALUE
 	CHE COSA RITORNA LA FUNZIONE
 ----------------------------------------------------------------------------
@@ -57,7 +60,7 @@ int	main(void)
 	char	*string = "Bonjour!";
 	unsigned int starto = 2;
 	size_t lenght = 3;
-	
+
 	printf("%s\n", ft_substr(string, starto, lenght));
 	return (0);
 }

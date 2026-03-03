@@ -3,21 +3,34 @@
 /*                                                        :::      ::::::::   */
 /*   libft.h                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: gifanell <giuliafanelli111@gmail.com>      +#+  +:+       +#+        */
+/*   By: gifanell <gifanell@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/30 22:55:41 by gifanell          #+#    #+#             */
-/*   Updated: 2024/12/08 19:43:51 by gifanell         ###   ########.fr       */
+/*   Updated: 2025/07/12 21:35:22 by gifanell         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef LIBFT_H
 # define LIBFT_H
 
+# ifndef BUFFER_SIZE
+#  define BUFFER_SIZE 10
+# endif
+
+# ifndef MAX_FD
+#  define MAX_FD 1024
+# endif
+
 # include <stdio.h>
 # include <unistd.h>
 # include <string.h>
 # include <stdlib.h>
 # include <stddef.h>
+# include <stdarg.h>
+# include <stdint.h>
+# include <stdbool.h>
+# include <limits.h>
+# include <fcntl.h>
 
 //String Prototypes
 int		ft_isalpha(int c);
@@ -43,6 +56,7 @@ void	*ft_memmove(void *dst, const void *src, size_t len);
 void	*ft_memchr(const void *s, int c, size_t n);
 int		ft_memcmp(const void *s1, const void *s2, size_t n);
 int		ft_atoi(const char *nptr);
+long	ft_atol(const char *nptr);
 
 //Malloc
 void	*ft_calloc(size_t nmemb, size_t size);
@@ -62,5 +76,23 @@ void	ft_putchar_fd(char c, int fd);
 void	ft_putstr_fd(char *s, int fd);
 void	ft_putendl_fd(char *s, int fd);
 void	ft_putnbr_fd(int n, int fd);
+
+//ft_printf
+int		ft_printf(const char *str, ...);
+int		ft_putchar(char c);
+int		ft_putstr(char *s);
+int		ft_putnbr(int nb);
+int		ft_uputnbr(unsigned int nb);
+int		ft_puthex(unsigned long n, bool is_lower);
+int		ft_putptr(unsigned long ptr);
+
+//get_next_line
+char	*ft_strjoin_gnl(char *s1, char *s2);
+char	*ft_strchr_gnl(char *s, int c);
+char	*ft_free(char **str);
+char	*clean_storage(char *storage);
+char	*new_line(char *storage);
+char	*read_buff(int fd, char *storage);
+char	*get_next_line(int fd);
 
 #endif
