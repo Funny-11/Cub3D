@@ -6,16 +6,16 @@
 /*   By: gifanell <gifanell@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/23 18:32:57 by gifanell          #+#    #+#             */
-/*   Updated: 2026/03/03 16:47:01 by gifanell         ###   ########.fr       */
+/*   Updated: 2026/04/24 15:32:06 by gifanell         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../../includes/cub3d.h"
+#include "../srcs/includes/cub3d.h"
 
-int     error_msg(char *msg)
+int	error_msg(char *msg)
 {
-    write(2, "Error\n", 6);
-
-    write(2, "\n", 1);
-    return (1);
+	write(2, "Error\n", 6);
+	write(2, msg, ft_strlen(msg));
+	write(2, "\n", 1);
+	return (1);
 }

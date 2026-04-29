@@ -6,18 +6,11 @@
 /*   By: gifanell <gifanell@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/23 18:31:59 by gifanell          #+#    #+#             */
-/*   Updated: 2026/03/02 18:35:49 by gifanell         ###   ########.fr       */
+/*   Updated: 2026/04/23 15:13:07 by gifanell         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../../includes/cub3d.h"
-
-static int	skip_spaces(char *line, int start)
-{
-	while (line[start] == ' ' || line[start] == '\t')
-		start++;
-	return (start);
-}
+#include "../includes/cub3d.h"
 
 int	parse_texture(char *line, t_map *map, int side)
 {
@@ -92,6 +85,16 @@ static void	free_parts(char **parts)
 	free(parts);
 }
 
+/*
+** parse_color — parsa una riga F o C con valori RGB
+**
+** FIX: il check originale era !parts[3] — significava che voleva
+** QUATTRO elementi (0,1,2,3). Ma RGB ha solo 3 valori.
+** Il check corretto e': parts[3] deve essere NULL (solo 3 elementi).
+**
+** found_idx: 4 = Floor, 5 = Ceiling (indici nell'array found[6])
+*/
+
 int	parse_color(char *line, t_map *map, int found_idx)
 {
 	int		i;
@@ -105,7 +108,7 @@ int	parse_color(char *line, t_map *map, int found_idx)
 	if (line[i] == '\0' || line[i] == '\n')
 		return (error_msg(ERR_COLOR));
 	parts = ft_split(&line[i], ',');
-	if (!parts || !parts[0] || !parts[1] || !parts[2] || !parts[3])
+	if (!parts || !parts[0] || !parts[1] || !parts[2] || parts[3])
 	{
 		if (parts)
 			free_parts(parts);
@@ -118,10 +121,5 @@ int	parse_color(char *line, t_map *map, int found_idx)
 	free_parts(parts);
 	if (color == -1)
 		return (error_msg(ERR_COLOR));
-	if (found_idx == 4)
-		map->floor_color = color;
-	else
-		map->ceiling_color = color;
-	map->found[found_idx] = 1;
-	return (0);
+	return (set_map_color(map, found_idx, color));
 }

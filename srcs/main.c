@@ -3,14 +3,14 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: gifanell <gifanell@student.42.fr>          +#+  +:+       +#+        */
+/*   By: ginobile <ginobile@student.42firenze.it    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/23 18:33:09 by gifanell          #+#    #+#             */
-/*   Updated: 2026/03/03 16:47:08 by gifanell         ###   ########.fr       */
+/*   Updated: 2026/04/10 21:36:50 by ginobile         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../../includes/cub3d.h"
+#include "../includes/cub3d.h"
 
 static int	check_extension(char *filename)
 {
@@ -34,8 +34,8 @@ int	main(int ac, char **av)
 	t_game	game;
 
 	if (ac != 2)
-		return (erro_msg(ERR_ARGS));
-	if (check_extension(av[1]));
+		return (error_msg(ERR_ARGS));
+	if (check_extension(av[1]))
 		return (1);
 	init_struct(&game);
 	if (parse_file(av[1], &game))

@@ -6,15 +6,15 @@
 /*   By: gifanell <gifanell@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/23 18:32:18 by gifanell          #+#    #+#             */
-/*   Updated: 2026/03/03 16:21:55 by gifanell         ###   ########.fr       */
+/*   Updated: 2026/04/10 22:49:09 by gifanell         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../../includes/cub3D.h"
+#include "../includes/cub3d.h"
 
 static void	free_grid_copy(char **grid, int rows)
 {
-	int i;
+	int	i;
 
 	i = 0;
 	while (i < rows)
@@ -25,7 +25,7 @@ static void	free_grid_copy(char **grid, int rows)
 	free(grid);
 }
 
-static char **copy_grid(t_map *map)
+static char	**copy_grid(t_map *map)
 {
 	char	**copy;
 	int		i;
@@ -50,7 +50,9 @@ static char **copy_grid(t_map *map)
 
 static int	flood_fill(char **grid, int x, int y, t_map *map)
 {
-	if (y < 0 || y >= map->rows || x < 0 || x >= map->cols)
+	if (y < 0 || y >= map->rows || x < 0)
+		return (1);
+	if (!grid[y] || x >= (int)ft_strlen(grid[y]))
 		return (1);
 	if (grid[y][x] == '1' || grid[y][x] == 'F')
 		return (0);

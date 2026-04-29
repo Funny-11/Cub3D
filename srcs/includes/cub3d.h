@@ -3,14 +3,14 @@
 /*                                                        :::      ::::::::   */
 /*   cub3d.h                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: gifanell <giuliafanelli111@gmail.com>      +#+  +:+       +#+        */
+/*   By: gifanell <gifanell@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/23 18:35:45 by gifanell          #+#    #+#             */
-/*   Updated: 2026/02/24 00:53:07 by gifanell         ###   ########.fr       */
+/*   Updated: 2026/04/23 15:14:07 by gifanell         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef	CUB3D_H
+#ifndef CUB3D_H
 # define CUB3D_H
 
 # include "../libft/libft.h"
@@ -24,45 +24,45 @@
 # include <math.h>
 
 //COSTANTI SCHERMO
-# define WINDOW_W		1280
-# define WINDOW_H		720
+# define WINDOW_W        1280
+# define WINDOW_H        720
 
 //COSTANTI VELOCITA'
-# define MOVE_SPEED		0.05
-# define ROT_SPEED		0.03
+# define MOVE_SPEED        0.05
+# define ROT_SPEED        0.03
 
-// COSTANTI INDICI TEXTURE (tex_path[NO], tex_path(WE)...)
-# define NO				0
-# define SO				1
-# define WE				2
-# define EA				3
+// COSTANTI INDICI TEXTURE (tex_path[NO], tex_path[WE]...)
+# define NO                0
+# define SO                1
+# define WE                2
+# define EA                3
 
 //COSTANTI KEYCODES
-# define KEY_W			119
-# define KEY_A			97
-# define KEY_S			115
-# define KEY_D			100
-# define KEY_LEFT		65361
-# define KEY_RIHGT		65363
-# define KEY_ESC		65307
+# define KEY_W            119
+# define KEY_A            97
+# define KEY_S            115
+# define KEY_D            100
+# define KEY_LEFT        65361
+# define KEY_RIHGT        65363
+# define KEY_ESC        65307
 
 //COSTANTI MSG DI ERRORE
-# define ERR_ARGS		"Usage: ./cub3D <map.cub>"
-# define ERR_EXT		"Map file must have .cub extension"
-# define ERR_OPEN		"Cannot open map file"
-# define ERR_ELEM		"Missing or duplicate element in .cub file"
-# define ERR_TEX		"Invalid or missing texture path"
-# define ERR_COLOR		"Invalid color value (must be 0-255)"
-# define ERR_MAP		"Map is not valid or not closed"
-# define ERR_PLAYER		"Map must have exactly one player"
-# define ERR_CHAR		"Invalid character in map"
-# define ERR_MLX		"MLX initialization failed"
+# define ERR_ARGS        "Usage: ./cub3D <map.cub>"
+# define ERR_EXT        "Map file must have .cub extension"
+# define ERR_OPEN        "Cannot open map file"
+# define ERR_ELEM        "Missing or duplicate element in .cub file"
+# define ERR_TEX        "Invalid or missing texture path"
+# define ERR_COLOR        "Invalid color value (must be 0-255)"
+# define ERR_MAP        "Map is not valid or not closed"
+# define ERR_PLAYER        "Map must have exactly one player"
+# define ERR_CHAR        "Invalid character in map"
+# define ERR_MLX        "MLX initialization failed"
 
 // ===============================================
-//			       Strutture dati
+//                   Strutture dati
 // ===============================================
 
-typedef struct	s_img
+typedef struct s_img
 {
 	void	*img;
 	char	*addr;
@@ -73,7 +73,7 @@ typedef struct	s_img
 	int		height_pixel;
 }	t_img;
 
-typedef struct	s_player
+typedef struct s_player
 {
 	double	pos_x;
 	double	pos_y;
@@ -83,7 +83,7 @@ typedef struct	s_player
 	double	plane_y;
 }	t_player;
 
-typedef struct	s_map
+typedef struct s_map
 {
 	char	**grid;
 	int		rows;
@@ -95,7 +95,7 @@ typedef struct	s_map
 	int		player_count;
 }	t_map;
 
-typedef struct	s_game
+typedef struct s_game
 {
 	void		*mlx;
 	void		*window;
@@ -104,9 +104,11 @@ typedef struct	s_game
 	t_player	player;
 	t_map		map;
 	int			keys[256];
+	int			turn_left;
+	int			turn_right;
 }	t_game;
 
-typedef struct	s_ray
+typedef struct s_ray
 {
 	double	camera_x;
 	double	dir_x;
@@ -131,20 +133,22 @@ typedef struct	s_ray
 
 // === PARSING ===
 int		parse_file(char *path, t_game *game);
-int		parse_element(char *line, t_map *map);
+//int		parse_element(char *line, t_map *map);
 int		parse_texture(char *line, t_map *map, int side);
 int		parse_color(char *line, t_map *map, int target);
-int		parse_map_line(t_map *map, t_game *game, char *line);
-int		find_player(t_map *map, t_player *player);
+int		parse_map_line(t_map *map, t_player *player, char *line);
+//int		find_player(t_map *map, t_player *player);
 
 // === VALIDAZIONE ===
 int		check_elements(t_map *map);
-int		find_player(t_map *map, t_player *player);
 int		validate_map(t_map *map, t_player *player);
 
 // === UTILS PARSING ===
-char	is_map_char(char c);
+int		is_map_char(char c);
 int		rgb_to_color(int r, int g, int b);
+void	*ft_realloc(void *ptr, size_t old_size, size_t new_size);
+int		skip_spaces(char *line, int start);
+int		set_map_color(t_map *map, int found_idx, int color);
 
 // ==== ERRORI E PULIZIA ===
 int		error_msg(char *msg);
@@ -158,5 +162,25 @@ void	render_frame(t_game *game);
 int		key_press(int keycode, t_game *game);
 int		key_release(int keycode, t_game *game);
 int		close_game(t_game *game);
+
+// === PLAYER ===
+void	move_forward(t_game *game);
+void	move_backward(t_game *game);
+void	strafe_left(t_game *game);
+void	strafe_right(t_game *game);
+void	rotate_left(t_game *game);
+void	rotate_right(t_game *game);
+
+// === ENGINE (DDA + RAYCASTER) ===
+void	init_ray(t_ray *ray, t_player *player, int x);
+void	dda_step(t_ray *ray, t_player *player);
+void	calc_wall_hit(t_ray *ray, t_map *map);
+void	calc_wall_hit_two(t_ray *ray);
+void	cast_ray(t_game *game, t_ray *ray, int x);
+int		get_tex_idx(t_ray *ray);
+
+// === TEXTURES ===
+int		load_textures(t_game *game);
+int		get_texture_color(t_img *tex, int tex_x, int tex_y);
 
 #endif

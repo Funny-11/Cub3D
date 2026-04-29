@@ -6,12 +6,11 @@
 #    By: gifanell <gifanell@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2026/01/27 19:28:06 by gifanell          #+#    #+#              #
-#    Updated: 2026/03/03 16:46:04 by gifanell         ###   ########.fr        #
+#    Updated: 2026/04/24 16:07:08 by gifanell         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 NAME = cub3D
-NAME_BONUS = cub3d_bonus
 
 CC = cc
 CFLAGS = -Wall -Wextra -Werror -g
@@ -20,6 +19,7 @@ SRCS =		./srcs/main.c \
 			./srcs/utils/error.c \
 			./srcs/utils/cleanup.c \
 			./srcs/utils/init.c \
+			./srcs/utils/game_loop.c \
 			./srcs/engine/dda.c \
 			./srcs/engine/raycaster.c \
 			./srcs/engine/render.c \
@@ -29,24 +29,19 @@ SRCS =		./srcs/main.c \
 			./srcs/parsing/parse_map.c \
 			./srcs/parsing/parse_textures.c \
 			./srcs/parsing/parse_utils.c \
-			./parsing/validate_map.c \
-			./player/movement.c \
-			./player/rotation.c \
-			./texture/east.xpm \
-			./texture/north.xpm \
-			./texture/south.xpm \
-			./texture/west.xpm \
+			./srcs/parsing/validate_map.c \
+			./srcs/player/movement.c \
+			./srcs/player/rotation.c
 
-SRCS_BONUS =		./parse_bonus.c \
-					./utils_bonus.c \
+OBJS = $(SRCS:.c=.o)
 
 MAKEFLAGS += -s
 
 LIBFT_DIR = ./libft
-LIBFT = -L$(LIBFT_DIR)/libft.a -lft
+LIBFT = $(LIBFT_DIR)/libft.a
 
 MLX_DIR = ./minilibx-linux
-MLX = -L$(MLX_DIR)/libmlx.a -lmlx -lXext -lX11 -lX -l, -lz ext
+MLX = $(MLX_DIR)/libmlx.a
 
 GREEN		= \033[0;32m
 YELLOW		= \033[0;33m
@@ -56,16 +51,18 @@ RESET		= \033[0m
 
 all:	$(NAME)
 
-$(NAME): $(LIBFT) $(MLX) $(SRCS)
+$(NAME): $(LIBFT) $(MLX) $(OBJS)
 	@echo "$(GRAY)Linking$(RESET)"
-	@$(CC) $(CFLAGS) $(LIBFT) $(MLX) -o $(NAME)
-	@echo "$(GREEN)$(NAME)Compiled successfully!$(RESET)"
+	@$(CC) $(CFLAGS) $(OBJS) $(LIBFT) $(MLX) -lXext -lX11 -lm -lz -o $(NAME)
+	@echo "$(GREEN)$(NAME) compiled successfully!$(RESET)"
 
-bonus: $(LIBFT) $(MLX)
+%.o: %.c
+	@$(CC) $(CFLAGS) -I./srcs/includes -I./libft -I./minilibx-linux -c $< -o $@
 
 $(LIBFT):
 	@echo "$(GRAY)Compiling libft...$(RESET)"
 	@$(MAKE) -C $(LIBFT_DIR) --no-print-directory
+
 $(MLX):
 	@echo "$(GRAY)Compiling MiniLibx...$(RESET)"
 	@$(MAKE) -C $(MLX_DIR) --no-print-directory
@@ -73,13 +70,12 @@ $(MLX):
 clean:
 	@$(MAKE) -C $(LIBFT_DIR) clean --no-print-directory > /dev/null 2>&1
 	@$(MAKE) -C $(MLX_DIR) clean --no-print-directory > /dev/null 2>&1
-	@rm -f *.o
+	@rm -f $(OBJS)
 
 fclean: clean
-	@rm -f $(NAME) $(NAME_BONUS)
+	@rm -f $(NAME)
 	@$(MAKE) -C $(LIBFT_DIR) fclean --no-print-directory > /dev/null 2>&1
 	@echo "$(GREEN)All cleaned!$(RESET)"
-
 
 re: fclean all
 

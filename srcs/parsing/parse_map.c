@@ -6,29 +6,15 @@
 /*   By: gifanell <gifanell@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/23 18:32:11 by gifanell          #+#    #+#             */
-/*   Updated: 2026/03/03 16:36:56 by gifanell         ###   ########.fr       */
+/*   Updated: 2026/04/23 15:37:03 by gifanell         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../../includes/cub3d.h"
+#include "../includes/cub3d.h"
 
-static void	set_player_dir(t_player *p, char dir_char)
+static void	set_player_dir_est_west(t_player *p, char dir_char)
 {
-	if (dir_char == 'N')
-	{
-		p->dir_x = 0.0;
-		p->dir_y = -1.0;
-		p->plane_x = 0.66;
-		p->plane_y = 0.0;
-	}
-	else if (dir_char == 'S')
-	{
-		p->dir_x = 0.0;
-		p->dir_y = 1.0;
-		p->plane_x = -0.66;
-		p->plane_y = 0.0;
-	}
-	else if (dir_char == 'E')
+	if (dir_char == 'E')
 	{
 		p->dir_x = 1.0;
 		p->dir_y = 0.0;
@@ -44,7 +30,28 @@ static void	set_player_dir(t_player *p, char dir_char)
 	}
 }
 
-static void	find_player_in_line(t_map *map, t_player *player, char *row, int row_idx)
+static void	set_player_dir_nord_sud(t_player *p, char dir_char)
+{
+	if (dir_char == 'N')
+	{
+		p->dir_x = 0.0;
+		p->dir_y = -1.0;
+		p->plane_x = 0.66;
+		p->plane_y = 0.0;
+	}
+	else if (dir_char == 'S')
+	{
+		p->dir_x = 0.0;
+		p->dir_y = 1.0;
+		p->plane_x = -0.66;
+		p->plane_y = 0.0;
+	}
+	else
+		set_player_dir_est_west(p, dir_char);
+}
+
+static void	find_player_in_line(t_map *map, t_player *player,
+	char *row, int row_idx)
 {
 	int	col;
 
@@ -56,7 +63,7 @@ static void	find_player_in_line(t_map *map, t_player *player, char *row, int row
 		{
 			player->pos_x = col + 0.5;
 			player->pos_y = row_idx + 0.5;
-			set_player_dir(player, row[col]);
+			set_player_dir_nord_sud(player, row[col]);
 			row[col] = '0';
 			map->player_count++;
 		}
@@ -64,14 +71,14 @@ static void	find_player_in_line(t_map *map, t_player *player, char *row, int row
 	}
 }
 
-static int  grow_grid(t_map *map, char *new_row)
+static int	grow_grid(t_map *map, char *new_row)
 {
 	char	**tmp;
 	int		len;
 
 	tmp = ft_realloc(map->grid,
-		(map->rows) * sizeof(char *),
-		(map->rows + 2) * sizeof(char *));
+			(map->rows) * sizeof(char *),
+			(map->rows + 2) * sizeof(char *));
 	if (!tmp)
 		return (error_msg(ERR_MAP));
 	map->grid = tmp;
@@ -84,7 +91,7 @@ static int  grow_grid(t_map *map, char *new_row)
 	return (0);
 }
 
-int parse_map_line(t_map *map, t_game *game, char *line)
+int	parse_map_line(t_map *map, t_player *player, char *line)
 {
 	char	*row;
 	int		i;
@@ -100,18 +107,11 @@ int parse_map_line(t_map *map, t_game *game, char *line)
 	while (row[i])
 	{
 		if (!is_map_char(row[i]))
-		{
-			free(row);
-			return (error_msg(ERR_CHAR));
-		}
+			return (free(row), error_msg(ERR_CHAR));
 		i++;
 	}
-	find_player_in_line(map, &game->player, row, map->rows);
+	find_player_in_line(map, player, row, map->rows);
 	if (grow_grid(map, row))
-	{
-		free(row);
-		return (1);
-	}
+		return (free(row), 1);
 	return (0);
-
 }
