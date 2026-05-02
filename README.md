@@ -1,66 +1,56 @@
+*This project has been created as part of the 42 curriculum by gnobile, gifanell.*
+
 # cub3D
 
-A 3D maze renderer built from scratch in C using raycasting, inspired by the classic Wolfenstein 3D engine.  
-Project developed as part of the [42 School](https://42.fr) curriculum at **42 Firenze**.
-
-![Language](https://img.shields.io/badge/language-C-blue)
-![Norm](https://img.shields.io/badge/norminette-passing-brightgreen)
-![License](https://img.shields.io/badge/license-42-lightgrey)
+A 3D maze renderer built from scratch in C using raycasting, inspired by the classic Wolfenstein 3D engine (Id Software, 1992). The project generates a real-time first-person perspective inside a maze defined by a configuration file, using the MiniLibX graphics library.
 
 ---
 
-## Overview
+## Description
 
-cub3D renders a first-person 3D perspective inside a maze defined by a `.cub` map file. The engine uses the **Digital Differential Analyzer (DDA)** algorithm to cast rays column by column across the screen, calculating wall intersections in real time. Walls are textured with `.xpm` images, and the player can navigate the environment using keyboard controls.
+cub3D renders a first-person 3D view inside a maze read from a `.cub` scene file. For each vertical column of the screen, a ray is cast from the player's position using the **Digital Differential Analyzer (DDA)** algorithm, stepping through the map grid until it hits a wall. The perpendicular distance to the wall determines its height on screen, creating the illusion of depth. Walls are textured with `.xpm` images that vary depending on which cardinal direction the wall faces (North, South, East, West). Floor and ceiling are drawn with configurable RGB colors.
 
-The project is built entirely with the **MiniLibX** graphics library and standard C, with no external game engines or frameworks.
+The player can move through the maze with WASD keys, rotate the camera with arrow keys, and the program handles wall collisions with a sliding mechanic that prevents the player from walking through walls while allowing smooth movement along them.
 
----
+The project is built entirely with the **MiniLibX** library and standard C, with no external game engines or frameworks. Rendering uses double buffering for flicker-free display at interactive frame rates.
 
-## Features
+### Features
 
-- Real-time raycasting engine with perpendicular distance correction (no fish-eye)
-- Textured walls using `.xpm` files, with correct orientation per cardinal direction (N/S/E/W)
-- Smooth player movement (WASD) with wall collision detection and sliding
+- Real-time raycasting with DDA algorithm
+- Perpendicular distance correction (no fish-eye effect)
+- Four distinct wall textures based on cardinal orientation (N/S/E/W)
+- Configurable floor and ceiling RGB colors
+- Smooth WASD movement with wall collision detection and sliding
 - Camera rotation via arrow keys using 2D rotation matrix
-- Double-buffered rendering for flicker-free display
-- Map parsing with flood-fill validation to ensure the map is fully enclosed
-- RGB ceiling and floor colors
+- Double-buffered rendering (921,600 pixels per frame)
+- Complete `.cub` file parser with flood-fill map validation
 - Clean memory management with full resource cleanup on exit
+- Error handling with explicit messages for all misconfiguration cases
 
 ---
 
-## Controls
-
-| Key | Action |
-|-----|--------|
-| `W` | Move forward |
-| `S` | Move backward |
-| `A` | Strafe left |
-| `D` | Strafe right |
-| `←` | Rotate camera left |
-| `→` | Rotate camera right |
-| `ESC` | Quit |
-
----
-
-## Building
+## Instructions
 
 ### Requirements
 
-- **GCC** or **CC** compiler
+- **cc** compiler
 - **Make**
 - **MiniLibX** (included or available via 42 repositories)
 - **X11** libraries (`libXext`, `libX11`)
-- Linux environment (X11-based display server)
+- **Math** library (`-lm`)
+- Linux environment with X11 display server
 
-### Compile
+### Compilation
 
 ```bash
 make
 ```
 
-### Run
+The Makefile compiles with `-Wall -Wextra -Werror` using `cc`. It does not perform unnecessary relinking: modifying a single source file only recompiles that file's object before relinking.
+
+Available rules: `make all`, `make clean`, `make fclean`, `make re`.
+
+### Execution
 
 ```bash
 ./cub3D path/to/map.cub
@@ -72,29 +62,33 @@ make
 ./cub3D test.cub
 ```
 
----
+### Controls
 
-## Map Format
+| Key | Action |
+|-----|--------|
+| `W` | Move forward |
+| `S` | Move backward |
+| `A` | Strafe left |
+| `D` | Strafe right |
+| `←` | Rotate camera left |
+| `→` | Rotate camera right |
+| `ESC` | Quit |
+| Window close button | Quit |
 
-Maps use the `.cub` extension. A valid map file contains texture paths, floor/ceiling colors, and a grid-based map layout.
+### Scene file format (.cub)
 
-### Elements
-
-```
-NO ./textures/north.xpm      # North wall texture
-SO ./textures/south.xpm      # South wall texture
-WE ./textures/west.xpm       # West wall texture
-EA ./textures/east.xpm       # East wall texture
-
-F 50,50,50                   # Floor color (R,G,B)
-C 30,30,80                   # Ceiling color (R,G,B)
-```
-
-### Map Grid
+The scene file defines textures, colors, and the map layout:
 
 ```
+NO ./textures/north.xpm
+SO ./textures/south.xpm
+WE ./textures/west.xpm
+EA ./textures/east.xpm
+
+F 107,142,86
+C 135,195,235
+
         1111111111111111
-        1000000000000001
         1000000000000001
         1000010000000001
         100000N000000001
@@ -102,83 +96,75 @@ C 30,30,80                   # Ceiling color (R,G,B)
         1111111111111111
 ```
 
-- `1` — Wall
-- `0` — Empty space (walkable)
-- `N`, `S`, `E`, `W` — Player start position and orientation
-- Spaces are allowed and treated as non-walkable areas
-- The map must be fully enclosed by walls (validated via flood fill)
-- Exactly one player position is required
+Map characters: `1` = wall, `0` = empty space, `N`/`S`/`E`/`W` = player start position and orientation. The map must be fully enclosed by walls. Spaces are valid parts of the map.
+
+The program returns `Error` followed by an explicit message for any misconfiguration (invalid extension, missing elements, duplicate keys, invalid paths, out-of-range colors, unclosed map, missing or multiple players, invalid characters).
 
 ---
 
-## Architecture
+## Resources
 
-```
-cub3D
-├── srcs/
-│   ├── main.c                    # Entry point, argument validation
-│   ├── includes/
-│   │   └── cub3d.h               # Structs, prototypes, constants
-│   ├── parsing/                  # .cub file parser
-│   │   ├── parse_file.c          # File reading and line dispatch
-│   │   ├── parse_elements.c      # Texture and color parsing
-│   │   ├── parse_map.c           # Map grid construction
-│   │   ├── parse_textures.c      # Element completeness check
-│   │   ├── parse_utils.c         # Utilities (realloc, char validation)
-│   │   └── validate_map.c        # Flood-fill map validation
-│   ├── engine/                   # Raycasting engine
-│   │   ├── dda.c                 # Ray initialization, DDA stepping, wall hit
-│   │   ├── raycaster.c           # Ray orchestration, texture selection
-│   │   ├── render.c              # Frame rendering (ceiling, walls, floor)
-│   │   └── textures.c            # XPM loading and pixel sampling
-│   ├── player/                   # Player controls
-│   │   ├── movement.c            # WASD with collision detection
-│   │   └── rotation.c            # Arrow key rotation (2D matrix)
-│   └── utils/                    # Infrastructure
-│       ├── init.c                # MLX setup, hooks, game loop
-│       ├── error.c               # Error reporting
-│       └── cleanup.c             # Memory and resource cleanup
-├── libft/                        # Custom C standard library
-├── minilibx-linux/               # MiniLibX graphics library
-├── textures/                     # Wall texture files (.xpm)
-├── test.cub                      # Example map
-└── Makefile
-```
+### References
+
+- [Lode's Raycasting Tutorial](https://lodev.org/cgtutor/raycasting.html) — primary reference for the raycasting algorithm, DDA implementation, and texture mapping
+- [MiniLibX documentation](https://harm-smits.github.io/42docs/libs/minilibx) — library reference for window management, image creation, and event handling
+- [Wolfenstein 3D](http://users.atw.hu/wolf3d/) — the original game that inspired this project
+
+### AI usage
+
+AI tools (Claude by Anthropic) were used during development for the following tasks:
+
+- **Code review and debugging**: identifying mismatches between function signatures and header declarations, spotting typos and logic errors in the initial codebase
+- **Documentation**: collaborating with both team members on writing this README
+- **Architecture guidance**: discussing project structure, the division of work between team members, and the order of initialization steps
+
+All AI-generated suggestions were reviewed, understood, tested, and validated by both team members before integration.
 
 ---
 
-## How the Raycasting Works
+## Project structure
 
-For each vertical column of pixels on screen:
-
-1. **Ray direction** is calculated from the player's direction vector and the camera plane
-2. **DDA algorithm** steps through the grid cell by cell until the ray hits a wall (`'1'`)
-3. **Perpendicular distance** to the wall is computed (not Euclidean — this prevents the fish-eye effect)
-4. **Wall height** on screen is inversely proportional to distance
-5. **Texture column** is sampled based on the exact hit point on the wall face
-6. **Ceiling and floor** are drawn above and below the wall strip
-
-This process repeats 1280 times per frame (once per screen column), producing a complete 3D perspective at interactive frame rates.
+```
+cub3D/
+├── Makefile
+├── README.md
+├── test.cub
+├── textures/                         # Wall texture files (.xpm)
+├── libft/                            # Custom C standard library
+├── minilibx-linux/                   # MiniLibX graphics library
+└── srcs/
+    ├── main.c                        # Entry point, argument validation
+    ├── includes/
+    │   └── cub3d.h                   # Structs, prototypes, constants
+    ├── parsing/                      # .cub file parser
+    │   ├── parse_file.c              # File reading and line dispatch
+    │   ├── parse_elements.c          # Texture path and RGB color parsing
+    │   ├── parse_map.c               # Map grid construction, player setup
+    │   ├── parse_textures.c          # Element completeness verification
+    │   ├── parse_utils.c             # Utilities (realloc, char validation)
+    │   └── validate_map.c            # Flood-fill map closure validation
+    ├── engine/                       # Raycasting engine
+    │   ├── dda.c                     # Ray init, DDA stepping, wall hit
+    │   ├── raycaster.c               # Ray orchestration, texture selection
+    │   ├── render.c                  # Frame rendering (ceiling, walls, floor)
+    │   └── textures.c               # XPM loading and pixel sampling
+    ├── player/                       # Player controls
+    │   ├── movement.c                # WASD with collision detection
+    │   └── rotation.c                # Arrow key rotation (2D matrix)
+    └── utils/                        # Infrastructure
+        ├── init.c                    # MLX setup, hooks, keyboard handling
+        ├── game_loop.c               # Main loop, close handler
+        ├── error.c                   # Error reporting to stderr
+        └── cleanup.c                 # Memory and resource cleanup
+```
 
 ---
 
 ## Authors
 
-| Author | Role | GitHub |
-|--------|------|--------|
-| **Giusmery Nobile** | MLX initialization, player movement/rotation, rendering pipeline, bug fixes | [@ginobile](https://github.com/giusnob) |
-| **Giulia Fanelli** | Parsing, map validation, DDA algorithm, raycasting, texture system | [@gifanell](https://github.com/gifanell) |
+| Author | Login | Role |
+|--------|-------|------|
+| **Giusmery Nobile** | gnobile | MLX initialization, player movement and rotation, rendering pipeline, memory management, bug fixes |
+| **Giulia Fanelli** | gifanell | File parsing, map validation, DDA algorithm, raycasting, texture system |
 
----
-
-## Acknowledgments
-
-- [42 Firenze](https://42firenze.it) and the 42 Network
-- [Lode's Raycasting Tutorial](https://lodev.org/cgtutor/raycasting.html) — the foundational reference for the raycasting algorithm
-- [MiniLibX documentation](https://harm-smits.github.io/42docs/libs/minilibx)
-
----
-
-## License
-
-This project was developed as part of the 42 School curriculum.
+Developed at **42 Firenze** as part of the [42 Network](https://42.fr) curriculum.
